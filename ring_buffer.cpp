@@ -3,8 +3,8 @@
 #include <cstdlib>
 using namespace std;
 
-#define FORWARD 1
-#define REWIND  0
+#define FORWARD   1
+#define  REWIND   0
 
 class Node {
   public:
@@ -12,24 +12,27 @@ class Node {
   Node *prev, *next;
 };
 
-class LList {
+class RList {
   public:
   string name;
   Node head, tail; 
-  LList(string argname) {
+  RList(string argname) {
     head.next = head.prev = &tail;
     tail.next = tail.prev = &head;
     name = argname;
   };
-  ~LList();
+  ~RList();
   void add(int ldata);
+  void pop(int ldata, Node *pnode);
+  void push(int ldata, Node *pnode);
+  void del(int ldata);
   void print(bool dir);
-  void dcopy(const LList& other);  
-  LList(const LList& other); 
-  LList& operator=(const LList& other);
+  void dcopy(const RList& other);  
+  RList(const RList& other); 
+  RList& operator=(const RList& other);
 };
 
-void LList::dcopy(const LList& other) {
+void RList::dcopy(const RList& other) {
   Node *scurr = other.tail.next;
   bool head_copied = false;
 
@@ -44,24 +47,24 @@ void LList::dcopy(const LList& other) {
   }
 }
 
-LList::LList(const LList& other) {
+RList::RList(const RList& other) {
   dcopy(other);
 }
 
-LList& LList::operator=(const LList& other) {
+RList& RList::operator=(const RList& other) {
   if (this == &other) return *this;
   dcopy(other);
   return *this;
 }
 
-LList::~LList() {
+RList::~RList() {
   Node *curr = head.next, *tmp;
   while(curr->next && (curr != &tail))
     tmp = curr, curr = curr->next, delete tmp;
   cout << "[FREE] (" << name << ") elements" << endl;
 }
 
-void LList::print(bool dir) {
+void RList::print(bool dir) {
   if (dir == FORWARD) {
     Node *tmp = &head;
     cout << "[FORWARD] (" << name << ") ";
@@ -87,7 +90,7 @@ void LList::print(bool dir) {
   }
 }
 
-void LList::add(int ldata) {
+void RList::add(int ldata) {
   if (head.data == 0) {
     head.data = ldata;
     return;
@@ -105,9 +108,37 @@ void LList::add(int ldata) {
   tail.prev = nnode;
 }
 
+class RStack: public RList {
+};
+
+class RQueue: public RList {
+};
+
+class RBuffer: public RList {
+};  
+
+void RList::del(int ldata) {
+  Node *tmp = &head;
+  
+  while(tmp) {
+    if(tmp->data == ldata) {
+      if(tmp != &head && tmp != &tail) {
+      } else if (tmp == &head) {
+        Node *link = head.next;
+        head.data = head.next->data;
+        head.next->prev = &head;
+        head.next = head.next->next;
+        delete link;
+      } else if (tmp == &tail) {
+      
+      }
+    }
+  }      
+}
+
 int main()
 {
-  LList nlist("nlist"), clist("clist"), plist("plist"), blist("blist");
+  RList nlist("nlist"), clist("clist"), plist("plist"), blist("blist");
   nlist.add(4); // goes into head
   nlist.add(5); // the rest go in between
   nlist.add(6);
